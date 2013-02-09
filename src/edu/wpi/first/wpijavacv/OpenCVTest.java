@@ -47,24 +47,27 @@ public class OpenCVTest {
         canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
         
         // Frame grabber
-        /*
+        ///*
         OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
         grabber.setImageHeight(480);
         grabber.setImageWidth(640);
         grabber.start();
-        */
+        //*/
         
         // CvCapture
+        /*
         CvCapture capture = cvCreateCameraCapture(0);
-        cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, 1280);
-        cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, 1024);
-        
+        cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, 320);
+        cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, 240);
+        */  
+      
         while(true)
         {
-            //IplImage img = grabber.grab();
-            IplImage img = cvQueryFrame(capture);
+            IplImage img = grabber.grab();
+            //IplImage img = cvQueryFrame(capture);
             if(img == null) return;
             canvas.setCanvasSize(img.width(), img.height());
+            System.out.println("width = " + img.width() + ", height = " + img.height());
             //canvas.showImage(img);
             //Thread.sleep(5000);
             //canvas.dispose();
@@ -156,7 +159,7 @@ public class OpenCVTest {
                     System.out.println("width = " + contour.getWidth() + 
                             ", height = " + contour.getHeight());
                     */
-                    WPIPolygon p = contour.approxPolygon(20);
+                    WPIPolygon p = contour.approxPolygon(10);
                     System.out.println("width = " + p.getWidth() + 
                             ", height = " + p.getHeight() + " x = " + p.getX() +
                             ", y = " + p.getY());

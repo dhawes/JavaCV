@@ -99,16 +99,16 @@ public class OpenCVTest {
         cvAnd(bin, val, bin, null);
         
         canvas.showImage(bin);
-        Thread.sleep(3000);
+        //Thread.sleep(3000);
         
         IplConvKernel morphKernel = IplConvKernel.create(3, 3, 1, 1, CV_SHAPE_RECT, null);
-        cvMorphologyEx(bin, bin, null, morphKernel, CV_MOP_CLOSE, 4);
+        cvMorphologyEx(bin, bin, null, morphKernel, CV_MOP_CLOSE, 2);
         
         //cvInRangeS(hsv, CvScalar(60, 200, 55), CvScalar(255, 255, 255), bin);
         //cvInRange(hsv, CvArr(60, 200, 55), CvArr(255, 255, 255), bin);
 
         canvas.showImage(bin);
-        Thread.sleep(3000);
+        //Thread.sleep(3000);
         
         IplImage tempImage = IplImage.create(bin.cvSize(), bin.depth(), 1);
         cvCopy(bin, tempImage);
@@ -118,17 +118,25 @@ public class OpenCVTest {
         WPIPolygon top = null;
         int rectCount = 0;
         
+        // first pass, find polygons to fill
         CvSeq contours = new CvSeq();
         CvMemStorage storage = CvMemStorage.create();
         cvFindContours(tempImage, storage, contours, 256, CV_RETR_LIST, CV_CHAIN_APPROX_TC89_KCOS);
         while(contours != null)
         {
             CvSeq convexContour = cvConvexHull2(contours, storage, CV_CLOCKWISE, 1);
-            //cvDrawContours(img, convexContour, CvScalar.RED, CvScalar.RED, -1, CV_FILLED, 8);
-            //canvas.showImage(img);
             cvDrawContours(tempImage, convexContour, CvScalar.WHITE, CvScalar.WHITE, -1, CV_FILLED, 8);
-            canvas.showImage(tempImage);
-            Thread.sleep(3000);
+            //canvas.showImage(tempImage);
+            //Thread.sleep(500);
+            contours = contours.h_next();
+        }
+        
+        // second pass filled in
+        contours = new CvSeq();
+        cvFindContours(tempImage, storage, contours, 256, CV_RETR_LIST, CV_CHAIN_APPROX_TC89_KCOS);
+        while(contours != null)
+        {
+            CvSeq convexContour = cvConvexHull2(contours, storage, CV_CLOCKWISE, 1);
             WPIContour contour = new WPIContour(cvCloneSeq(convexContour, storage));
             if(contour.getWidth() != contour.getHeight())
             {
@@ -138,7 +146,8 @@ public class OpenCVTest {
                 */
                 WPIPolygon p = contour.approxPolygon(20);
                 System.out.println("width = " + p.getWidth() + 
-                        ", height = " + p.getHeight());
+                        ", height = " + p.getHeight() + " x = " + p.getX() +
+                        ", y = " + p.getY());
                 if(p.isConvex() && p.getNumVertices() == 4)
                 {
                     System.out.println("Looks like a rect.");
@@ -149,15 +158,10 @@ public class OpenCVTest {
                     if(top == null || p.getY() < top.getY())
                     {
                         top = p;
+                        System.out.println("Top!");
                     }
                     rectCount++;
                 }
-                /*
-                else
-                {
-                    System.out.println("Not a rect.");
-                }
-                */
             }
             contours = contours.h_next();
         }

@@ -57,6 +57,7 @@ public class OpenCVTest {
         // CvCapture
         /*
         CvCapture capture = cvCreateCameraCapture(0);
+        //CvCapture capture = cvCreateFileCapture("http://128.173.201.214/jpg/image.jpg");
         cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, 320);
         cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, 240);
         */  
